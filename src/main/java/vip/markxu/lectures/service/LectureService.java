@@ -1,6 +1,5 @@
 package vip.markxu.lectures.service;
 
-import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,10 +8,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import vip.markxu.lectures.entity.ImageEntity;
 import vip.markxu.lectures.entity.LectureEntity;
+import vip.markxu.lectures.interfaces.IFileService;
 import vip.markxu.lectures.pojo.LecturePojo;
 import vip.markxu.lectures.pojo.PagePojos;
 import vip.markxu.lectures.repository.LectureRepository;
-import vip.markxu.lectures.service.Iservice.ILectureService;
+import vip.markxu.lectures.interfaces.ILectureService;
 import vip.markxu.lectures.status.ResponseBody;
 import vip.markxu.lectures.vo.LectureVo;
 
@@ -28,7 +28,7 @@ public class LectureService implements ILectureService {
     private LectureRepository lectureRepository;
 
     @Autowired
-    private FileUploadService fileUploadService;
+    private FileService fileService;
 
 
     @Override
@@ -54,8 +54,13 @@ public class LectureService implements ILectureService {
         lectureEntity.setDescription(lectureVo.getDescription());
         lectureEntity.setLocation(lectureVo.getLocation());
 
-        List<ImageEntity> images=fileUploadService.uploadImage(lectureVo.getFiles());
-        lectureEntity.setImageEntity(images);
+        List<String> images=fileService.upload(lectureVo.getFiles());
+        images.forEach(item->{{
+            ImageEntity imageEntity=new ImageEntity();
+            imageEntity.setImage_url(item);
+            lectureEntity.getImageEntity().add(imageEntity);
+        }});
+
         lectureRepository.save(lectureEntity);
 
         return ResponseBody.Success(new LecturePojo(lectureEntity));
@@ -65,14 +70,22 @@ public class LectureService implements ILectureService {
     @Transactional
     @Override
     public Object delete(Long id) {
-        @NonNull LectureEntity lectureEntity = lectureRepository.findLectureEntitiesById(id);
-        lectureRepository.delete(lectureEntity);
+        lectureRepository.deleteById(id);
         return ResponseBody.Success();
     }
 
     @Override
-    public Object change(Long id, LectureVo lectureVo) {
-        return null;
+    @Transactional
+    public Object change(Long id,LectureVo lectureVo) {
+        LectureEntity lectureEntity=lectureRepository.findById(id).get();
+        lectureEntity.setName(lectureVo.getName());
+        lectureEntity.setStart_time(lectureVo.getStart_time());
+        lectureEntity.setEnd_time(lectureVo.getEnd_time());
+        lectureEntity.setLocation(lectureVo.getLocation());
+        lectureEntity.setDescription(lectureVo.getDescription());
+
+        lectureRepository.save(lectureEntity);
+        return ResponseBody.Success(new LecturePojo(lectureEntity));
     }
 
 }

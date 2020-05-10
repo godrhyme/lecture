@@ -2,6 +2,7 @@ package vip.markxu.lectures.entity;
 
 import lombok.Data;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import vip.markxu.lectures.status.LectureStatusEnum;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,7 +31,7 @@ public class LectureEntity implements Serializable {
 
     String description;
 
-    int status;
+    LectureStatusEnum status;
 
     @JoinColumn(name = "lecture_id")
     @OneToMany(cascade = CascadeType.ALL)

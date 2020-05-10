@@ -1,4 +1,4 @@
-package vip.markxu.lectures.service.Iservice;
+package vip.markxu.lectures.interfaces;
 
 
 import vip.markxu.lectures.entity.LectureEntity;
@@ -20,6 +20,6 @@ public interface ILectureService {
     Object delete(Long id);
 
     //修改讲座信息
-    Object change(Long id, LectureVo lectureVo);
+    Object change(Long id,LectureVo lectureVo);
 
 }

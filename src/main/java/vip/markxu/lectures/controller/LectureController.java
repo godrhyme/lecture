@@ -28,19 +28,19 @@ public class LectureController {
         return lectureService.getPageLecture(page, size);
     }
 
-    @RequestMapping("/post")
+    @PostMapping("/post")
     public Object postLectures(LectureVo lectureVo){
         return lectureService.post(lectureVo);
     }
 
-    @RequestMapping("/delete/{postId}")
-    public Object deleteLectures(Long postId){
+    @DeleteMapping("/delete/{postId}")
+    public Object deleteLectures(@PathVariable Long postId){
         return lectureService.delete(postId);
     }
 
-    @RequestMapping("/change/{postId}")
-    public Object changeLectures(Long postId,LectureVo lectureVo) {
-        return lectureService.change(postId, lectureVo);
+    @PutMapping("/post")
+    public Object changeLectures(long id,LectureVo lectureVo) {
+        return lectureService.change(id,lectureVo);
     }
 
     @InitBinder
